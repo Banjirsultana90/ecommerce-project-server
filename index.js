@@ -24,10 +24,20 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const alljobs=client.db('jobDB').collection('categories')
+    const addedjobs=client.db('jobDB').collection('addedjobs')
+
     app.get('/categories',async(req,res)=>{
         const result=await alljobs.find().toArray()
         res.send(result)
     })
+ app.post('/categories',async(req,res)=>{
+    const newjob=req.body
+    console.log(newjob);
+    const result=await addedjobs.insertOne(newjob)
+    res.send(result)
+})
+
+
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
