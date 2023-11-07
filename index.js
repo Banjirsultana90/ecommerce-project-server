@@ -27,6 +27,13 @@ async function run() {
     const bidedjobs=client.db('jobDB').collection('bidedjobs')
     const addedjobs=client.db('jobDB').collection('addedjobs')
 
+
+
+    app.get('/bidedjobs',async(req,res)=>{
+        const result=await bidedjobs.find().toArray()
+        res.send(result)
+    })
+
     app.get('/categories',async(req,res)=>{
         const result=await alljobs.find().toArray()
         res.send(result)
