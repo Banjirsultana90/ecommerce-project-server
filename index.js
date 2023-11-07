@@ -1,7 +1,7 @@
 const express=require("express")
 const cors=require('cors')
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app =express()
 
 
@@ -36,6 +36,18 @@ async function run() {
     const result=await addedjobs.insertOne(newjob)
     res.send(result)
 })
+
+app.get('/addedjobs',async(req,res)=>{
+    const result=await addedjobs.find().toArray()
+    res.send(result)
+})
+app.delete('/addedjobs/:id',async(req,res)=>{
+    const id =req.params.id
+    const query={
+        _id:new ObjectId(id)
+    }
+    const result=await addedjobs.deleteOne(query)
+    res.send(result)})
 
 
     // Connect the client to the server	(optional starting in v4.7)
