@@ -30,7 +30,7 @@ async function run() {
         const result=await alljobs.find().toArray()
         res.send(result)
     })
- app.post('/categories',async(req,res)=>{
+ app.post('/addedjobs',async(req,res)=>{
     const newjob=req.body
     console.log(newjob);
     const result=await addedjobs.insertOne(newjob)
@@ -49,6 +49,39 @@ app.delete('/addedjobs/:id',async(req,res)=>{
     const result=await addedjobs.deleteOne(query)
     res.send(result)})
 
+    app.get('/addedjobs/:id',async(req,res)=>{
+        const id=req.params.id
+        const query={
+            _id:new ObjectId(id)
+        }
+        const result=await addedjobs.findOne(query)
+        res.send(result)
+    })
+
+    app.put('/addedjobs/:id', async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        const filter = { _id: new ObjectId(id) };
+        const options={upsert:true}
+        const updatedjob = req.body;
+        
+        const job = {
+          $set: {
+            jobTitle: updatedjob.jobTitle,
+            deadline: updatedjob.deadline,
+            shortDescription: updatedjob.shortDescription,
+            email: updatedjob.email,
+            category: updatedjob.category,
+            minimumprice: updatedjob.minimumprice,
+            maximumprice: updatedjob.maximumprice,
+          },
+        };
+      
+        const result = await addedjobs
+        .updateOne(filter, job,options);
+        res.send(result);
+      });
+      
 
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
