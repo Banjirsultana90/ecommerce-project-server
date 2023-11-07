@@ -24,18 +24,26 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const alljobs=client.db('jobDB').collection('categories')
+    const bidedjobs=client.db('jobDB').collection('bidedjobs')
     const addedjobs=client.db('jobDB').collection('addedjobs')
 
     app.get('/categories',async(req,res)=>{
         const result=await alljobs.find().toArray()
         res.send(result)
     })
+ 
  app.post('/addedjobs',async(req,res)=>{
     const newjob=req.body
     console.log(newjob);
     const result=await addedjobs.insertOne(newjob)
     res.send(result)
 })
+
+app.post('/bidedjobs',async(req,res)=>{
+    const formdata=req.body
+    console.log(formdata);
+    const result=await bidedjobs.insertOne(formdata)
+    res.send(result)})
 
 app.get('/addedjobs',async(req,res)=>{
     const result=await addedjobs.find().toArray()
