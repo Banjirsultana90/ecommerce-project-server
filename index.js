@@ -16,22 +16,22 @@ app.use(cors({
 
 app.use(express.json())
 
-const logger= async(req, res, next)=>{
-    console.log('called' ,req.method ,req.originalUrl);
+const logger = async (req, res, next) => {
+    console.log('called', req.method, req.originalUrl);
     next()
 }
 
-const verifyToken=async (req,res,next)=>{
-    const token=req.cookies?.token
-    console.log('value of token' ,token)
-    if(!token){
-        return res.status(401).send({message: 'forbidden'})
+const verifyToken = async (req, res, next) => {
+    const token = req.cookies?.token
+    console.log('value of token', token)
+    if (!token) {
+        return res.status(401).send({ message: 'forbidden' })
     }
-    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err, decoded)=>{
-        if(err){
-            return res.status(401).send({message: 'unauthorized'})
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({ message: 'unauthorized' })
         }
-        req.user =decoded
+        req.user = decoded
 
         next()
     })
@@ -103,12 +103,12 @@ async function run() {
         })
 
         app.get('/addedjobs', async (req, res) => {
-           
+
             const result = await addedjobs.find().toArray()
             res.send(result)
         })
         app.delete('/addedjobs/:id', async (req, res) => {
-           
+
             const id = req.params.id
             const query = {
                 _id: new ObjectId(id)
@@ -117,18 +117,33 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/addedjobs/:id', logger, verifyToken, async (req, res) => {
-            // console.log('cook cook cookie', req.cookies)
-            if(req.user.email!==req.query.email){
-                return res.status(403).send({message:'forbidden access'})
-            }
-            const id = req.params.id
+        // app.get('/addedjobs/:id', async (req, res) => {
+        //     console.log(req.query.email)
+        //     // console.log('token owner info', req.user)
+        //     // if(req.user.email!==req.query.email){
+        //     //     return res.status(403).send({message:'forbidden access'})
+        //     // }
+        //     const id = req.params.id
+        //     const query = {
+        //         _id: new ObjectId(id)
+        //     }
+        //     const result = await addedjobs.findOne(query)
+        //     res.send(result)
+        // })
+        app.get('/addedjobs/:id', async (req, res) => {
+            console.log(req.query.email);
+            // console.log('token owner info', req.user);
+            // if (req.user.email !== req.query.email) {
+            //     return res.status(403).send({ message: 'forbidden access' });
+            // }
+            const id = req.params.id;
             const query = {
                 _id: new ObjectId(id)
-            }
-            const result = await addedjobs.findOne(query)
-            res.send(result)
-        })
+            };
+            const result = await addedjobs.findOne(query);
+            res.send(result);
+        });
+
 
         app.put('/addedjobs/:id', async (req, res) => {
             const id = req.params.id;
