@@ -9,7 +9,9 @@ const app = express()
 app.use(cookieParser())
 app.use(cors({
     origin: [
-        'http://localhost:5173'
+        'http://localhost:5173',
+        'https://ecommerce-project-b67b1.firebaseapp.com',
+        'https://ecommerce-project-b67b1.web.app'
     ],
     credentials: true
 }))
@@ -64,8 +66,10 @@ async function run() {
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: true,
-                sameSite: 'none'
+                secure: process.env.NODE_ENV === 'production', 
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                // secure: true,
+                // sameSite: 'none'
             })
                 .send({ success: true })
         })
